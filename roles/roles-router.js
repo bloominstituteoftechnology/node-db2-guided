@@ -41,25 +41,38 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
-  // db('roles').insert(req.body).then([id] => {
-  // or alternatively:
-  db('roles')
-    .insert(req.body) // insert returns an array with the id of the last row inserted as it's only element
-    .then(ids => {
-      const [id] = ids;
-      // if we want to return the inserted record we need to make another call to the database
-      db('roles')
-        .where({ id })
-        .first()
-        .then(role => {
-          res.status(200).json(role);
-        });
-    })
-    .catch(error => {
-      // this catch will be run for any errors including errors in the nested call to get the role by id
-      res.status(500).json(error);
-    });
+// router.post('/', (req, res) => {
+//   db('roles')
+//     .insert(req.body)
+//     .then(([id]) => {
+//       // or alternatively:
+//       // db('roles').insert(req.body).then(ids => {
+//       //   const [id] = ids;
+
+//       db('roles')
+//         .where({ id })
+//         .first()
+//         .then(role => {
+//           res.status(201).json(role);
+//         });
+//     })
+//     .catch(error => {
+//       res.status(500).json(error);
+//     });
+// });
+
+// using async/await
+router.post('/', async (req, res) => {
+  try {
+    const [id] = await db('roles').insert(req.body);
+    const role = await db('roles')
+      .where({ id })
+      .first();
+
+    res.status(201).json(role);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 router.put('/:id', (req, res) => {
