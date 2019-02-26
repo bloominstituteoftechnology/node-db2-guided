@@ -38,7 +38,19 @@ select * from customers order by id desc limit 5 -- introduce what limit is doin
 
 ## Use UPDATE to Modify Data
 
+```sql
+update Customers set City = 'Silicon Valley'
+-- always remember to have a where clause or it will update all records in the table
+where CustomerName = 'Lambda School'
+```
+
 ## Use DELETE to Remove Data
+
+```sql
+delete from Customers
+-- always remember to have a where clause or it will delete all records in the table
+where CustomerName = 'Lambda School'
+```
 
 ## Introduce Knex Query Builder
 
