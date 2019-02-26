@@ -44,6 +44,8 @@ update Customers set City = 'Silicon Valley'
 where CustomerName = 'Lambda School'
 ```
 
+**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
+
 ## Use DELETE to Remove Data
 
 ```sql
@@ -51,6 +53,8 @@ delete from Customers
 -- always remember to have a where clause or it will delete all records in the table
 where CustomerName = 'Lambda School'
 ```
+
+**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
 
 ## Introduce Knex Query Builder
 
