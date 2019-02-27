@@ -27,8 +27,9 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   db('roles')
     .where({ id: req.params.id }) // always returns an array
-    // show the results without adding .first(), then come back and add it to remove the wrapping array
-    .first() // grabs the first element of the array, we could also just use [0] to retrieve it manually
+    // show the results without adding .first(),
+    // then come back and add it to remove the wrapping array
+    .first() // grabs the first element of the returned array
     .then(role => {
       if (role) {
         res.status(200).json(role);
