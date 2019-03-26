@@ -13,6 +13,19 @@ Starter code is here: [Web DB II Guided Project](https://github.com/LambdaSchool
 
 The [Starter Code](https://github.com/LambdaSchool/db-ii-guided) for this project is configured to run the server by typing `yarn server` or `npm run server`. The server will restart automatically on changes.
 
+## How to Use this Repository
+
+- clone the [starter code](https://github.com/LambdaSchool/webtesting-ii-guided).
+- create a solution branch: `git checkout -b solution`.
+- add this repository as a remote: `git remote add solution https://github.com/LambdaSchool/webtesting-ii-guided-solution`
+- pull from this repository's `master` branch into the `solution` branch in your local folder `git pull solution master:solution --force`.
+
+A this point you should have a `master` branch pointing to the student's repository and a `solution` branch with the latest changes added to the solution repository.
+
+When making changes to the `solution` branch, commit the changes and type `git push solution solution:master` to push them to this repository.
+
+When making changes to the `master` branch, commit the changes and use `git push origin master` to push them to the student's repository.
+
 ## Introduce Module Challenge
 
 Introduce the project for the afternoon. If they are done early, encourage them to study tomorrow's content and follow the tutorials on TK.
