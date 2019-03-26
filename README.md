@@ -101,6 +101,7 @@ const knexConfig = {
   client: 'sqlite3', // the npm module we installed
   useNullAsDefault: true, // needed when working with SQLite
   connection: {
+    // relative to the root folder
     filename: './data/rolex.db3', // we need to create the data folder and the rolex.db3 database
   },
 };

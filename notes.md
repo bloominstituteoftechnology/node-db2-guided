@@ -8,11 +8,11 @@ relational dbs think like this [ id, name, is_active ]
 
 we need to translate between Objects and Relations
 
-we could use an ORM (Object Relational Mapper)
+we could use an `ORM` (Object Relational Mapper)
 
-most ORMs include a Query Builder
+most `ORM`s include a `Query Builder`
 
-a QB translates between a language (JS) and SQL statements
+a `Query Builder` translates between a language (JS) and SQL statements
 
 result = {
 ...project props
