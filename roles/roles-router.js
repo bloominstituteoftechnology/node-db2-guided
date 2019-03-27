@@ -1,8 +1,14 @@
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // get the roles from the database
   res.send('Write code to retrieve all roles');
+  try {
+    const roles = await db('roles');
+  } catch (error) {
+
+  }
+  const roles = await db('roles');
 });
 
 router.get('/:id', (req, res) => {
