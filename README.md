@@ -1,4 +1,4 @@
-# DB II Guided Project Solution
+# DB II Guided Project
 
 Guided project **DB II** Module.
 
