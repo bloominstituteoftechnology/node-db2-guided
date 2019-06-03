@@ -30,45 +30,6 @@ When making changes to the `master` branch, commit the changes and use `git push
 
 Introduce the project for the afternoon. If they are done early, encourage them to study tomorrow's content and follow the tutorials on TK.
 
-## Use INSERT to Add Data to a Table
-
-Quickly walk through the syntax of the insert command.
-
-```sql
--- show basic syntax without including the field/column names
-insert into Customers values ('Lambda School', 'Austen Allred'); -- dont run command
-
--- explain that if the DB is auto-incrementing the PK, we should list the fields
--- note we can add fields in any order, the values just need to be in the same ordinal position
-insert into Customers (Country, CustomerName, ContactName, Address, City, PostalCode)
-values ('USA', 'Lambda School', 'Austen Allred', '1 Lambda Court', 'Provo', '84601');
-
--- get the inserted record
-select * from customers order by id desc limit 5 -- introduce what limit is doing there, change limit to 3 to see effect
-```
-
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
-
-## Use UPDATE to Modify Data
-
-```sql
-update Customers set City = 'Silicon Valley'
--- always remember to have a where clause or it will update all records in the table
-where CustomerName = 'Lambda School'
-```
-
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
-
-## Use DELETE to Remove Data
-
-```sql
-delete from Customers
--- always remember to have a where clause or it will delete all records in the table
-where CustomerName = 'Lambda School'
-```
-
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
-
 ## Introduce Knex Query Builder
 
 Go through a brief explanation of what a `Query Builder` is and how it is simpler than a full fledge ORM like [Sequelize](http://docs.sequelizejs.com/), while providing a nice API we can use from JS.
