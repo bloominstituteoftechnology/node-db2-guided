@@ -7,7 +7,6 @@ Starter code is here: [Web DB II Guided Project](https://github.com/LambdaSchool
 ## Prerequisites
 
 - [SQLite Studio](https://sqlitestudio.pl/index.rvt?act=download) installed.
-- [This Query Tool Loaded in the browser](https://www.w3schools.com/Sql/tryit.asp?filename=trysql_select_top).
 
 ## Starter Code
 
@@ -30,188 +29,199 @@ When making changes to the `master` branch, commit the changes and use `git push
 
 Introduce the project for the afternoon. If they are done early, encourage them to study tomorrow's content and follow the tutorials on TK.
 
-## Introduce Knex Query Builder
+## Introduce Database Mangement Systems
 
-Go through a brief explanation of what a `Query Builder` is and how it is simpler than a full fledge ORM like [Sequelize](http://docs.sequelizejs.com/), while providing a nice API we can use from JS.
+Discuss DBMS and review material in TK. Clarify the different between a type of database and a DBMS. 
 
-Explain that the query builder will translate from JavaScript code to the correct SQL for each Database Management System.
+Discuss some advantages and disadvantages of Sqlite. 
 
-Explain that the library also provides a way to use raw SQL for things that are not supported through the JS API.
+## Introduce SQLite Studio
+
+Students should have already installed this tool via the preclass videos.
+
+1. Start the server using `yarn server` or `npm server`. 
+
+2. Using the browser or `Postman`, run a get request to `/api/fruits`
+
+3. We hope we are seeing all entries from the database, but how do we know for sure?
+
+4. Open `./data/produce.db3` database in SqliteStudio and confirm that the entries in the `fruits` table matches the API response.
+
+5. Clarify that this is a Sqlite specific tool and different DBMS's have different apps, visualizer, commandline tools, etc. that allow direct database access. 
+
+## Introduce the Database Schema
+
+Within SqliteStudio, explore the schema of the `fruits` table.
+
+- Discuss datatypes. Mention these can vary based on DBMS.
+- Discuss primary keys. These are required and must be unique. Though they are often auto incrementing integers, they don't necessarily need to be that. 
+- Discuss constraints: notNull, unique, default,
+- Clarify the difference between a database table and a database schema
+
+Using `POST api/fruits`, try inserting data that violates the schema. Note the errors that appear in the console. 
+
+## Creating a database and table using SqliteStudio
+
+1. Delete the `./data/produce.db3` database. Confirm that the API no longer functions. 
+
+2. Use SqliteStudio to create a new database, also called `produce.db3` and stored in the `data/` directory. Emphasize it must be named exactly that. 
+
+3. Create a `fruits` table using SqliteStudio.
+
+Fruits Table Schema
+
+| Column          | Type         | Metadata                              |
+| --------------- | ------------ | ------------------------------------- |
+| id              | integer      | Primary Key, Configure auto-increment |
+| name            | varchar(128) | Unique, Not Null                      |
+| avg weight (oz) | decimal      | Not Null                              |
+| delicious       | boolean      | Default true                          |
+
+4. Commit the schema using the check mark. Show the students the SQL code for schema creation. 
+
+5. Go to the Data table for the table in SqliteStudio. Add a few sample entries. 
+
+6. Confirm that the API is working again. 
+
+**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
+
+## Introduce Migrations
+
+When creating and updating a schema we have a number of concerns to address:
+
+- Each developers' local schema should be the same
+- The development schema should match the the production schema
+- If the production schema needs to be changed, this should cannot corrupt any existing production data. 
+
+Migrations are a standard process for managing a database schema with respect to these issue.  
 
 **Take a break if it's a good time**
 
-Next we'll add Knex to the project and configure it to connect to an existing SQLite database.
+## Knex Setup
 
-## Configure Knex to Connect to SQLite
+1. We need the `knex` and `sqlite3` libraries. Knex uses different database drivers, depending on the target DBMS. For SQLite it uses the `sqlite3` npm module. Note that these are already added into this particular repo. 
 
-Knex uses different database drivers, depending on the target DBMS. For SQLite it uses the `sqlite3` npm module.
+2. Open the `data/db-config.js` file. This where we will configure knex. Delete the contents of this file, so we can start from scratch. 
 
-Add [Knex](https://www.npmjs.com/package/knex) and [the SQLite3 driver](https://www.npmjs.com/package/sqlite3) to the project.
+3. In order easily generate a configure `knex`, we can use the command: `knex init`. The students should have already globally installed `knex` in the preclass videos, but if not they may do so now or use `npx knex init`. 
 
-Inside `./roles/roles-router.js`
-
-- require `knex`
-- build configuration object that `knex` needs to be able to find and connect to the database.
-- get a configured instance of `knex` by invoking `knex` and passing it the configuration object.
+4. Open `knexfile.js`. We have auto generated config objects for three different environments. We may delete all except for the development object.
 
 ```js
-// right after const router = require('express').Router();
-const knex = require('knex');
-// this configuration object teaches knex how to find the database and what driver to use
-const knexConfig = {
-  client: 'sqlite3', // the npm module we installed
-  useNullAsDefault: true, // needed when working with SQLite
-  connection: {
-    // relative to the root folder
-    filename: './data/rolex.db3', // we need to create the data folder and the rolex.db3 database
-  },
+module.exports = {
+
+  development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './dev.sqlite3'
+    }
+  }
+
 };
-
-const db = knex(knexConfig);
 ```
 
-- create the `data` folder
-- use `SQLite Studio` to manually create the `rolex.db3` file inside the `data` folder.
-- add a `roles` table and remember to **commit changes** to the database file.
-- use the `data` tab in SQLite Studio to add test data. Add `Student`, `PM` and `Flex TA` roles.
-
-Roles table Schema
-
-| Column | Type         | Metadata                              |
-| ------ | ------------ | ------------------------------------- |
-| id     | integer      | Primary Key, Auto-increment, Not Null |
-| name   | varchar(128) | Unique, Not Null                      |
-
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
-
-Next we will learn how to retrieve all data from a table using `knex`.
-
-## Use Knex to Retrieve Data
-
-Inside `roles-router.js` modify the `GET /` endpoint to retrieve a list of roles.
+5. Update the database location and add `useNullAsDefault`.
 
 ```js
-router.get('/', (req, res) => {
-  // check knex docs for the different ways to get data from tables
-  // we'll use the following format
-  db('roles') // returns a promise, so we need the bros
-    .then(roles => {
-      res.status(200).json(roles);
-    })
-    .catch(error => {
-      res.status(500).json(error); // we'll return the error during development to see what it is
-    });
-});
+module.exports = {
+
+  development: {
+    // our DBMS driver
+    client: 'sqlite3',
+    // the location of our db
+    connection: {
+      filename: './data/produce.db3',
+    },
+    // necessary when using sqlite3
+    useNullAsDefault: true
+  }
+
+};
 ```
 
-- make a `GET` request to `/api/roles` and enjoy the wonderful square brackets.
-
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
-
-### You Do (estimated 5 minutes to complete)
-
-Ask students to write a `GET /:id` endpoint to find a `role` by it's `id`.
-
-One possible solution:
+6. Initialize knex in `db-config`
 
 ```js
-router.get('/:id', (req, res) => {
-  db('roles')
-    .where({ id: req.params.id }) // always returns an array
-    // show the results without adding .first(), then come back and add it to remove the wrapping array
-    .first() // grabs the first element of the array, we could also just use [0] to retrieve it manually
-    .then(role => {
-      if (role) {
-        res.status(200).json(role);
-      } else {
-        res.status(404).json({ message: 'Role not found' });
-      }
-    })
-    .catch(error => {
-      res.status(500).json(error);
-    });
-});
+const knex = require('knex');
+
+const config = require('../knexfile.js');
+
+// we must select the development object from our knexfile
+const db = knex(config.development);
+
+// export for use in models
+module.exports = db;
 ```
+
+7. Confirm that the API is connecting to the database with a `GET` request. 
 
 **wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
 
 **Take a break if it's a good time**
 
-Next we will learn how to add data to a database table using `knex`.
+## Create a Migration File
 
-## Use Knex to Add Data
+1. Delete `data/fruits.db3`. We're going to create a schema for our DB using `knex`. 
+
+2. Add the `migrations` field to `knexfile.js`. This tells `knex` where to store our migration files. By default they'll appear in a directory called `migrations/` in the root folder. 
 
 ```js
-router.post('/', (req, res) => {
-  // db('roles').insert(req.body).then([id] => {
-  // or alternatively:
-  db('roles')
-    .insert(req.body)
-    .then(ids => {
-      const [id] = ids;
-
-      db('roles')
-        .where({ id })
-        .first()
-        .then(role => {
-          res.status(200).json(role);
-        });
-    })
-    .catch(error => {
-      res.status(500).json(error);
-    });
-});
+development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './data/produce.db3',
+    },
+    useNullAsDefault: true,
+    // moves migration files into the data folder
+    migrations: {
+      directory: './data/migrations'
+    }
+  }
 ```
+
+3. Create a new migration by running `knex migrate:make fruits-schema`. Show that a new file has appeared in `data/migrations/`. `knex` has automatically added a timestamp. This is important for keeping track of the order of migrations.  
+
+## Create a Schema with Migrations
+
+Using the `Schema Builder` in `knex` we can now defined our schema in this file. 
+
+1. Add code into `up` in the `fruits-schema` migration file. This tells knex how to add the table to the db. 
+
+2. Add code into `down`. This code should do the exact opposite of `up`, in case we need to this change. 
+
+3. Notice that we still don't have a database. Just writing the migration file won't enact any change. We have to actually run our schema using `knex migrate:latest`. It will tell us which migrations have run and create a brand new db if one doesn't exist. 
+
+4. Confirm that the API is working again. 
 
 **wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
 
-## Use Knex to Update Data
+## Rollbacks
 
-```js
-router.put('/:id', (req, res) => {
-  db('roles')
-    .where({ id: req.params.id })
-    .update(req.body)
-    .then(count => {
-      if (count > 0) {
-        db('roles')
-          .where({ id: req.params.id })
-          .first()
-          .then(role => {
-            res.status(200).json(role);
-          });
-      } else {
-        res.status(404).json({ message: 'Role not found' });
-      }
-    })
-    .catch(error => {
-      // this catch will be run for any errors including errors in the nested call to get the role by id
-      res.status(500).json(error);
-    });
-});
-```
+Notice that we forgot to set a default value for `delicious`. If we notice this mistake **before** the changes have been pushed and merged, it's much easier to fix. 
+
+1. Edit the `fruits-schema` `up` function as follows.
+
+2. Run `knex migrate:latest`
+
+3. Post a new fruit entry, missing the `delicious` field. Notice we still don't have a default. Our migration was not updated. When we ran `knex migrate:latest` no files ran because it doesn't detect changes to existing migrations. 
+
+4. Run `knex migrate:rollback`. This undoes that migration. Make a `GET` request to confirm the table is gone. 
+
+5. Run `knex migrate:latest`. We've now rerun our schema file. 
 
 **wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
 
-## Use Knex to Remove Data
+## Update a Schema with Migrations
 
-```js
-router.delete('/:id', (req, res) => {
-  db('roles')
-    .where({ id: req.params.id })
-    .del()
-    .then(count => {
-      if (count > 0) {
-        res.status(204).end(); // we could also respond with 200 and a message
-      } else {
-        res.status(404).json({ message: 'Role not found' });
-      }
-    })
-    .catch(error => {
-      // this catch will be run for any errors including errors in the nested call to get the role by id
-      res.status(500).json(error);
-    });
-});
-```
+Once any migrations have been pushed and merged into the master branch, we **should not** edit them. Instead, write a new migration for any changes. For example, what if a few months into the release of our fruit app, we decide we want to track color. 
 
-**wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
+1. Create a new migration with `knex migrate:make fruits-color-field`
+
+2. Write the `up` and `down` function for this migration. 
+
+3. Run `knex migrate:latest`. 
+
+4. `POST` a new entry to confirm our changes went through. 
+
+## Seed the Database
+
