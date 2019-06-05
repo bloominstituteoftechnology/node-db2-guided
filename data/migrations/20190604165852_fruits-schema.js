@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
     tbl.increments();
     tbl.text('name', 128).unique().notNullable();
     tbl.decimal('avgWeightOz').notNullable();
-    tbl.boolean('delicious').defaultTo(true);
+    tbl.boolean('delicious');
   });
 };
 

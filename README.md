@@ -31,9 +31,9 @@ Introduce the project for the afternoon. If they are done early, encourage them 
 
 ## Introduce Database Mangement Systems
 
-Discuss DBMS and review material in TK. Clarify the different between a type of database and a DBMS. 
+Discuss DBMS and review material in TK. Clarify the difference between a type of database and a DBMS. 
 
-Discuss some advantages and disadvantages of Sqlite. 
+Discuss the advantages and disadvantages of Sqlite. 
 
 ## Introduce SQLite Studio
 
@@ -41,17 +41,15 @@ Students should have already installed this tool via the preclass videos.
 
 1. Start the server using `yarn server` or `npm server`. 
 
-2. Using the browser or `Postman`, run a get request to `/api/fruits`
+2. Using the browser or `Postman`, run a get request to `/api/fruits`. We believe we are seeing all entries from the database, but how do we know for sure?
 
-3. We hope we are seeing all entries from the database, but how do we know for sure?
+3. Open `./data/produce.db3` database in SQLiteStudio and confirm that the entries in the `fruits` table matches the API response.
 
-4. Open `./data/produce.db3` database in SqliteStudio and confirm that the entries in the `fruits` table matches the API response.
-
-5. Clarify that this is a Sqlite specific tool and different DBMS's have different apps, visualizer, commandline tools, etc. that allow direct database access. 
+4. Clarify that this is a SQLite specific tool and different DBMS's have different apps, visualizer, commandline tools, etc. that allow direct database access. 
 
 ## Introduce the Database Schema
 
-Within SqliteStudio, explore the schema of the `fruits` table.
+Within SQLiteStudio, explore the schema of the `fruits` table.
 
 - Discuss datatypes. Mention these can vary based on DBMS.
 - Discuss primary keys. These are required and must be unique. Though they are often auto incrementing integers, they don't necessarily need to be that. 
@@ -60,13 +58,13 @@ Within SqliteStudio, explore the schema of the `fruits` table.
 
 Using `POST api/fruits`, try inserting data that violates the schema. Note the errors that appear in the console. 
 
-## Creating a database and table using SqliteStudio
+## Creating a database and table using SQLiteStudio
 
 1. Delete the `./data/produce.db3` database. Confirm that the API no longer functions. 
 
-2. Use SqliteStudio to create a new database, also called `produce.db3` and stored in the `data/` directory. Emphasize it must be named exactly that. 
+2. Use SQLiteStudio to create a new database, also called `produce.db3` and stored in the `data/` directory. Emphasize it must be named exactly that. 
 
-3. Create a `fruits` table using SqliteStudio.
+3. Create a `fruits` table using SQLiteStudio.
 
 Fruits Table Schema
 
@@ -75,11 +73,11 @@ Fruits Table Schema
 | id              | integer      | Primary Key, Configure auto-increment |
 | name            | varchar(128) | Unique, Not Null                      |
 | avg weight (oz) | decimal      | Not Null                              |
-| delicious       | boolean      | Default true                          |
+| delicious       | boolean      |                          |
 
 4. Commit the schema using the check mark. Show the students the SQL code for schema creation. 
 
-5. Go to the Data table for the table in SqliteStudio. Add a few sample entries. 
+5. Go to the Data table for the table in SQLiteStudio. Add a few sample entries. 
 
 6. Confirm that the API is working again. 
 
@@ -99,9 +97,9 @@ Migrations are a standard process for managing a database schema with respect to
 
 ## Knex Setup
 
-1. We need the `knex` and `sqlite3` libraries. Knex uses different database drivers, depending on the target DBMS. For SQLite it uses the `sqlite3` npm module. Note that these are already added into this particular repo. 
+1. We need the `knex` and `sqlite3` libraries. Knex uses different database drivers, depending on the target DBMS. For SQLite it uses the `sqlite3` npm module. Note that these have already been added into this particular repo. 
 
-2. Open the `data/db-config.js` file. This where we will configure knex. Delete the contents of this file, so we can start from scratch. 
+2. Open the `fruits/fruits-model.js` file. Show where knex is configured, but mention that this not best practice. Delete the knex related code as the top of the file.
 
 3. In order easily generate a configure `knex`, we can use the command: `knex init`. The students should have already globally installed `knex` in the preclass videos, but if not they may do so now or use `npx knex init`. 
 
@@ -139,7 +137,7 @@ module.exports = {
 };
 ```
 
-6. Initialize knex in `db-config`
+6. Create a file called `data/db-config.js`. Initialize knex in `db-config`.
 
 ```js
 const knex = require('knex');
@@ -153,7 +151,13 @@ const db = knex(config.development);
 module.exports = db;
 ```
 
-7. Confirm that the API is connecting to the database with a `GET` request. 
+7. At the top of `fruits/fruits-model.js`, import our config file.
+
+```js
+  const db = require('../data/db-config.js');
+```
+
+8. Confirm that the API is connecting to the database with a `GET` request. 
 
 **wait for students to catch up, use a `yes/no` poll to let students tell you when they are done**
 
@@ -187,9 +191,26 @@ Using the `Schema Builder` in `knex` we can now defined our schema in this file.
 
 1. Add code into `up` in the `fruits-schema` migration file. This tells knex how to add the table to the db. 
 
+```js
+exports.up = function(knex, Promise) {
+  return knex.schema.createTable('fruits', tbl => {
+    tbl.increments();
+    tbl.text('name', 128).unique().notNullable();
+    tbl.decimal('avgWeightOz');
+    tbl.boolean('delicious');
+  });
+};
+```
+
 2. Add code into `down`. This code should do the exact opposite of `up`, in case we need to this change. 
 
-3. Notice that we still don't have a database. Just writing the migration file won't enact any change. We have to actually run our schema using `knex migrate:latest`. It will tell us which migrations have run and create a brand new db if one doesn't exist. 
+```js
+exports.down = function(knex, Promise) {
+  return knex.schema.dropTableIfExists('fruits');
+};
+```
+
+3. Notice that we still don't have a database. Just writing the migration file won't enact any change. We have to actually run our schema using `knex migrate:latest`. It will tell us which migrations have run. It also creates the db if one doesn't exist. 
 
 4. Confirm that the API is working again. 
 
@@ -197,9 +218,16 @@ Using the `Schema Builder` in `knex` we can now defined our schema in this file.
 
 ## Rollbacks
 
-Notice that we forgot to set a default value for `delicious`. If we notice this mistake **before** the changes have been pushed and merged, it's much easier to fix. 
+Notice that we forgot to set `notNullable` on for `avgWeightOz`. If we notice this mistake **before** the changes have been pushed and merged, it's much easier to fix. 
 
 1. Edit the `fruits-schema` `up` function as follows.
+
+```js
+  tbl.text('name', 128).unique().notNullable();
+  // add the constraint here
+  tbl.decimal('avgWeightOz').notNullable();
+  tbl.boolean('delicious');
+```
 
 2. Run `knex migrate:latest`
 
@@ -213,11 +241,26 @@ Notice that we forgot to set a default value for `delicious`. If we notice this 
 
 ## Update a Schema with Migrations
 
-Once any migrations have been pushed and merged into the master branch, we **should not** edit them. Instead, write a new migration for any changes. For example, what if a few months into the release of our fruit app, we decide we want to track color. 
+Once any migrations have been pushed and merged into the master branch, we **should not** edit them. Instead, write a new migration for any changes. For example, perhaps a few months into the release of our fruit app we decide we want to track color. 
 
 1. Create a new migration with `knex migrate:make fruits-color-field`
 
 2. Write the `up` and `down` function for this migration. 
+
+```js
+exports.up = function(knex, Promise) {
+  // use knex.schema.table() for updating tables
+  return knex.schema.table('fruits', tbl => {  
+    tbl.string('color', 128);
+  });
+};
+
+exports.down = function(knex, Promise) {
+  return knex.schema.table('fruits', tbl => {
+    tbl.dropColumn('color');
+  });
+};
+```
 
 3. Run `knex migrate:latest`. 
 
@@ -225,3 +268,62 @@ Once any migrations have been pushed and merged into the master branch, we **sho
 
 ## Seed the Database
 
+Right now we have an empty database. Often we want to prepopulate it with test data. We use `knex seeds` for that.
+
+1. Edit `knexfile.js` to specify a directory. The default is a `seed/` directory in the root folder. 
+
+```js
+  migrations: {
+    directory: './data/migrations'
+  },
+  // add the seed option
+  seeds: {
+    directory: './data/seeds'
+  }
+```
+
+2. Run `knex seed:make 01-fruits`. Notice it appears in `data/seeds/`. Get in the habit of adding numbers to the name to control the order of our seed files, though in this repo we will only write one.
+
+3. Set the table name we're interested in seeding.
+
+```js
+exports.seed = function(knex, Promise) {
+  // change table name here
+  return knex('fruits').del()
+    .then(function () {
+      // and here
+      return knex('fruits').insert([
+        {id: 1, colName: 'rowValue1'},
+        {id: 2, colName: 'rowValue2'},
+        {id: 3, colName: 'rowValue3'}
+      ]);
+    });
+};
+
+```
+
+4. Before we seed data, we must wiping the table clean. Use `truncate()` so that the ids reset each time.
+
+```js
+// change del() to truncate()
+return knex('fruits').truncate()
+```
+
+5. Add seed data. Copy the array into slack to save time. 
+
+```js
+exports.seed = function(knex, Promise) {
+  return knex('fruits').truncate()
+    .then(function () {
+      // add data into insert
+      return knex('fruits').insert([
+        { name: 'dragon fruit', avgWeightOz: 16.7, color: 'red' },
+        { name: 'durian', avgWeightOz: 52.9, delicious: false, color: 'yellow' },
+        { name: 'rambutan', avgWeightOz: 1.1, color: 'pink'},
+        { name: 'lingonberry', avgWeightOz: 0.01, color: 'red' },
+        { name: 'golden gooseberries', avgWeightOz: 0.02, delicious: false, color: 'yellow' }
+      ]);
+    });
+};
+```
+6. Run `knex seed:run`. Running seeds is much more straight forward migrations. Every time you run this command your database will reset. 
