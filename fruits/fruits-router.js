@@ -1,12 +1,10 @@
 const express = require('express');
 
-const Fruits = require('./fruits-model.js');
-
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const fruits = await Fruits.find();
+    const fruits = await db('fruits');
     res.json(fruits); 
   } catch (err) {
     res.status(500).json({ message: 'Failed to retrieve fruits' });
@@ -16,7 +14,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const fruit = await Fruits.findById(id);
+    const fruit = await db('fruits').where({ id });
     
     res.json(fruit);
   } catch (err) {
@@ -27,7 +25,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const fruitData = req.body;
-    const newFruitEntry = await Fruits.add(fruitData);
+    const [ id ] = await db('fruits').insert(fruitData);
+    const newFruitEntry = await db('fruits').where({ id });
   
     res.status(201).json(newFruitEntry);
   } catch (err) {
