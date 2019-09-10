@@ -11,37 +11,41 @@ const db = knex({
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const fruits = await db('fruits');
+router.get('/', (req, res) => {
+  db('fruits')
+  .then(fruits => {
     res.json(fruits); 
-  } catch (err) {
+  })
+  .catch (err => {
     res.status(500).json({ message: 'Failed to retrieve fruits' });
-  }
+  });
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const fruit = await db('fruits').where({ id });
-    
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+  db('fruits').where({ id }).first()
+  .then(fruit => {
     res.json(fruit);
-  } catch (err) {
+  }) 
+  .catch (err => {
     res.status(500).json({ message: 'Failed to retrieve fruit' });
-  }
+  });
 });
 
-router.post('/', async (req, res) => {
-  try {
-    const fruitData = req.body;
-    const [ id ] = await db('fruits').insert(fruitData);
-    const newFruitEntry = await db('fruits').where({ id });
-  
-    res.status(201).json(newFruitEntry);
-  } catch (err) {
+router.post('/', (req, res) => {
+  const fruitData = req.body;
+  db('fruits').insert(fruitData)
+  .then(ids => {
+    db('fruits').where({ id: ids[0] })
+    .then(newFruitEntry => {
+      res.status(201).json(newFruitEntry);
+    });
+  })
+  .catch (err => {
     console.log('POST error', err);
     res.status(500).json({ message: "Failed to store data" });
-  }
+  });
 });
 
 module.exports = router;
