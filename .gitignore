@@ -1,3 +1,9 @@
+# Mac
+.DS_Store
+
+# Let others use Yarn
+package-lock.json
+
 # Logs
 logs
 *.log
