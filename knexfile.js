@@ -9,7 +9,15 @@ module.exports = {
       filename: './data/produce-2.db3'
     },
 
-   useNullAsDefault: true
+   useNullAsDefault: true,
+
+   migrations: {
+     directory: "./data/migrations"
+   },
+
+   seeds: {
+     directory: './data/seedsa'
+   }
   }
 
 };
