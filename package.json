@@ -1,29 +1,29 @@
 {
-  "name": "node-db2-guided",
-  "version": "1.0.0",
-  "description": "Guided project solution for **Node DB 2** Module.",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LambdaSchool/webdb-ii-guided.git"
-  },
-  "keywords": [],
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/LambdaSchool/webdb-ii-guided/issues"
-  },
-  "homepage": "https://github.com/LambdaSchool/webdb-ii-guided#readme",
-  "dependencies": {
-    "express": "^4.17.1",
-    "helmet": "^3.22.0",
-    "knex": "^0.21.1",
-    "sqlite3": "^4.2.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.3"
-  }
+    "name": "node-db2-guided",
+    "version": "1.0.0",
+    "description": "Guided project solution for **Node DB 2** Module.",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "server": "nodemon index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LambdaSchool/webdb-ii-guided.git"
+    },
+    "keywords": [],
+    "author": "",
+    "bugs": {
+        "url": "https://github.com/LambdaSchool/webdb-ii-guided/issues"
+    },
+    "homepage": "https://github.com/LambdaSchool/webdb-ii-guided#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "helmet": "^3.23.3",
+        "knex": "^0.21.2",
+        "sqlite3": "^5.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    }
 }
