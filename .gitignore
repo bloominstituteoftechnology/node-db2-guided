@@ -1,7 +1,7 @@
 # Mac
 .DS_Store
 
-# Let others use Yarn
+# Let students use Yarn
 package-lock.json
 
 # Logs
