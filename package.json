@@ -20,7 +20,7 @@
     "dependencies": {
         "express": "^4.17.1",
         "helmet": "^4.0.0",
-        "knex": "^0.21.2",
+        "knex": "^0.21.12",
         "sqlite3": "^5.0.0"
     },
     "devDependencies": {
