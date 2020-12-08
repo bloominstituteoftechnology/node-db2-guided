@@ -1,8 +1,8 @@
 # Mac
 .DS_Store
 
-# Let students use Yarn
-package-lock.json
+# VSCode
+.vscode
 
 # Logs
 logs
