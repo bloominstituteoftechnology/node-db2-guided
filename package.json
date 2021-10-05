@@ -13,11 +13,10 @@
     },
     "dependencies": {
         "express": "^4.17.1",
-        "helmet": "^4.6.0",
-        "knex": "^0.95.7",
+        "knex": "^0.95.11",
         "sqlite3": "^5.0.2"
     },
     "devDependencies": {
-        "nodemon": "^2.0.12"
+        "nodemon": "^2.0.13"
     }
 }
