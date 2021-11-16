@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LambdaSchool/node-db2-guided.git"
+        "url": "git+https://github.com/BloomInstituteOfTechnology/node-db2-guided.git"
     },
     "dependencies": {
         "express": "^4.17.1",
