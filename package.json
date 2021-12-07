@@ -9,15 +9,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LambdaSchool/node-db2-guided.git"
+        "url": "git+https://github.com/bloominstituteoftechnology/node-db2-guided.git"
     },
     "dependencies": {
         "express": "^4.17.1",
-        "knex": "^0.95.12",
+        "knex": "^0.95.14",
         "sqlite3": "^5.0.2"
     },
     "devDependencies": {
-        "nodemon": "^2.0.14"
+        "nodemon": "^2.0.15"
     },
     "volta": {
         "node": "16.13.0"
