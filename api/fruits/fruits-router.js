@@ -1,18 +1,8 @@
-const express = require('express');
-const knex = require('knex');
-
-const db = knex({
-  client: 'sqlite3',
-  connection: {
-    filename: './data/produce.db3'
-  },
-  useNullAsDefault: true
-});
-
-const router = express.Router();
+const Fruit = require('./fruits-model');
+const router = require('express').Router();
 
 router.get('/', (req, res) => {
-  db('fruits')
+  Fruit.getAll()
     .then(fruits => {
       res.json(fruits);
     })
@@ -22,11 +12,13 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  const { id } = req.params;
-
-  db('fruits').where({ id }).first()
+  Fruit.getById(req.params.id)
     .then(fruit => {
-      res.json(fruit);
+      if (fruit) {
+        res.json(fruit);
+      } else {
+        res.status(404).json({ message: 'Failed to retrieve fruit' });
+      }
     })
     .catch(err => {
       res.status(500).json({ message: 'Failed to retrieve fruit' });
@@ -34,17 +26,12 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const fruitData = req.body;
-  db('fruits').insert(fruitData)
-    .then(ids => {
-      db('fruits').where({ id: ids[0] })
-        .then(newFruitEntry => {
-          res.status(201).json(newFruitEntry);
-        });
+  Fruit.create(req.body)
+    .then(newFruitEntry => {
+      res.status(201).json(newFruitEntry);
     })
     .catch(err => {
-      console.log('POST error', err);
-      res.status(500).json({ message: "Failed to store data" });
+      res.status(500).json({ message: 'Failed to create fruit' });
     });
 });
 
