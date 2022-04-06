@@ -12,9 +12,9 @@
     "url": "git+https://github.com/bloominstituteoftechnology/node-db2-guided.git"
   },
   "dependencies": {
-    "@vscode/sqlite3": "5.0.7",
+    "@vscode/sqlite3": "5.0.8",
     "express": "^4.17.3",
-    "knex": "^1.0.3"
+    "knex": "^1.0.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
