@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
       res.json(fruits);
     })
     .catch(err => {
-      res.status(500).json({ message: 'Failed to retrieve fruits' });
+      res.status(500).json({ message: `Failed to retrieve fruits: ${err.message}` });
     });
 });
 
@@ -21,7 +21,7 @@ router.get('/:id', (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).json({ message: 'Failed to retrieve fruit' });
+      res.status(500).json({ message: `Failed to retrieve fruit: ${err.message}` });
     });
 });
 
@@ -31,7 +31,7 @@ router.post('/', (req, res) => {
       res.status(201).json(newFruitEntry);
     })
     .catch(err => {
-      res.status(500).json({ message: 'Failed to create fruit' });
+      res.status(500).json({ message: `Failed to create fruit: ${err.message}` });
     });
 });
 
