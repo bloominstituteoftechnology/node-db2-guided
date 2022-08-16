@@ -1,15 +1,13 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+
 exports.up = function(knex) {
-  
+  return knex.schema.table('fruits', tbl => {
+    tbl.boolean('sweet');
+  })
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
 exports.down = function(knex) {
-  
+  // ALTER TABLE fruits DROP COLUMN sweet;
+  return knex.schema.table('fruits', tbl => {
+    tbl.dropColumn('sweet');
+  });
 };
