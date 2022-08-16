@@ -4,7 +4,10 @@ module.exports = {
         connection: {
             filename: './data/produce2.db3'
         },
-        useNullAsDefault: true
+        useNullAsDefault: true,
+        migrations: {
+            directory: './data/migrations'
+        }
     },
     testing: {
         client: 'sqlite3',
